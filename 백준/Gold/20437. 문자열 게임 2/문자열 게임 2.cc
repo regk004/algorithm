@@ -22,7 +22,6 @@ int main(){
 
         int Max = 0;
         int Min = 1e9;
-        int s,e;
         for(int i = 0; i < S.size(); i++){
             int c_idx = int(S[i]-97);
             char_queue[c_idx].push(i);
