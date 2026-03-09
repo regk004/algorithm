@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <algorithm>
 
 using namespace std;
 
@@ -12,53 +12,38 @@ int main(){
     int S,N;
     cin >> S >> N;
 
-    priority_queue<pair<int,int>> pq;
-
+    vector<pair<int,int>> toilet;
     int s;
     char n;
     for(int i = 0; i < N; i++){
         cin >> s >> n;
         if (n == 'y')
-            pq.push({s,1});
+            toilet.push_back({s,1});
         else 
-            pq.push({s,0});
+            toilet.push_back({s,0});
     }
 
+    sort(toilet.begin(),toilet.end());
 
-    int cur_t = pq.top().first;
-    int need= 0;
-    int not_need = 0;
-    int need_only = 0;
-    int total = 0;
-    while(!pq.empty()){
+    long long need = 0;
+    long long not_need = 0;
+    long long max_full = 0;
 
-        if (pq.top().first != cur_t){
-            need_only += cur_t-pq.top().first;
-            total += (cur_t-pq.top().first)*S;
-            need_only = min(0,need_only-need);
-            total = min(need_only,total-need-not_need);
-            need = 0;
-            not_need = 0;
-            cur_t = pq.top().first;
+    for( auto [t,tp] : toilet){
+        if(tp == 1) need++;
+        else not_need++;
+
+        long long cur_full = not_need - (long long) (S-1)*t;
+
+        if (cur_full > max_full) max_full = cur_full;
+
+        if(need+max_full > t  || need+not_need > (long long)t*S){
+            cout << "No";
+            return 0;
         }
-
-        if(pq.top().second == 1)
-            need++;
-        else 
-            not_need++;
-        pq.pop();
     }
 
-    need_only += cur_t;
-    total += cur_t*S;
-    need_only = min(0,need_only-need);
-    total = min(need_only,total-need-not_need);
-    
-
-    if(need_only < 0 || total < 0) 
-        cout << "No";
-    else
-        cout << "Yes";
+    cout << "Yes";
 
     return 0;
 }
